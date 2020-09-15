@@ -1,0 +1,1 @@
+JosephM.Xrm.FieldChangeHistory.Console.exe -xrmsetting

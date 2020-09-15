@@ -1,0 +1,43 @@
+{
+  "AddToSolution": true,
+  "Connections": [
+    {
+      "AuthenticationProviderType": 1,
+      "DiscoveryServiceAddress": "http:\/\/qa2012\/XRMServices\/2011\/Discovery.svc",
+      "Domain": "auqa2012",
+      "Name": "VM Field Change History",
+      "OrganizationUniqueName": "FieldChangeHistory",
+      "Password": {
+        "_password": "AQAAANCMnd8BFdERjHoAwE\/Cl+sBAAAAhKMdQKoH7E6gyhDOgdFf+wAAAAACAAAAAAAQZgAAAAEAACAAAABhRcrjsIYTVNG8e6of\/rv8PT+8fr2nULLV9OFlpZqdRQAAAAAOgAAAAAIAACAAAAB15uIiRM9oXglOVeR0Urr9+iP4ijWlSt1hy1DnE602JSAAAAAJ7qDFsjMz8oqJYN68MEHFB5SdBXdTKHyS05riMUkEU0AAAAAbGP\/0Rg6ZNyYVEWRI3YIK+rn5vSJZdfVaZHU3ltxKM9etDM2b8VsWLuDqJ0Lko9LBzTVDRWBmwj+s9aL\/ckdG",
+        "<EncryptPassword>k__BackingField": true
+      },
+      "ToolingConnectionId": null,
+      "UseXrmToolingConnector": false,
+      "Username": "joseph",
+      "Active": true,
+      "HideActive": false
+    }
+  ],
+  "DeployIntoFieldProjects": [
+    {
+      "ProjectName": "N\/A"
+    }
+  ],
+  "PluginProjects": [
+    {
+      "ProjectName": "JosephM.Xrm.FieldChangeHistory.Plugins"
+    }
+  ],
+  "Solution": {
+    "Id": "1fdc94e9-bef3-ea11-814b-000c290a70aa",
+    "Name": "JosephMcGregorFieldChangeHistory",
+    "RecordType": "solution"
+  },
+  "SolutionDynamicsCrmPrefix": "jmcg",
+  "SolutionObjectPrefix": "FieldChange",
+  "WebResourceProjects": [
+    {
+      "ProjectName": "JosephM.Xrm.FieldChangeHistory.WebResources"
+    }
+  ]
+}
