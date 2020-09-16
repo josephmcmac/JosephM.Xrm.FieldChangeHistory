@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace JosephM.Xrm.FieldChangeHistory.Plugins.Services
 {
@@ -14,5 +15,6 @@ namespace JosephM.Xrm.FieldChangeHistory.Plugins.Services
         public int MaxValueLength { get; set; }
         public int MaxInternalValueLength { get; set; }
         public int MaxHistoryNameLength { get; set; }
+        public FilterExpression FilterExpression { get; set; }
     }
 }

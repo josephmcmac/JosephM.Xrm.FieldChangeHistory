@@ -14,6 +14,163 @@ namespace JosephM.Xrm.FieldChangeHistory.Plugins.Test
     public class FieldChangeHistoryTests : FieldChangeXrmTest
     {
         [TestMethod]
+        public void FieldChangeHistoryIgnoreNullsTest()
+        {
+            DeleteAll(Entities.jmcg_fieldchangeconfiguration);
+            DeleteAll(Entities.jmcg_fieldchangehistory);
+            DeleteAll(Entities.jmcg_testentity);
+
+            var filterXml = "<filter type=\"and\"><condition attribute=\"statecode\" operator=\"eq\" value=\"0\" /><condition attribute=\"jmcg_boolean\" operator=\"eq\" value=\"1\" /></filter>";
+
+            var fieldChangeConfig = CreateTestRecord(Entities.jmcg_fieldchangeconfiguration, new Dictionary<string, object>
+                {
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_name, Fields.jmcg_testentity_.jmcg_user },
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_entitytype, Entities.jmcg_testentity },
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_field, Fields.jmcg_testentity_.jmcg_user },
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_lookupfieldfield, Fields.jmcg_testentity_.ownerid },
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_historyfilter, filterXml },
+                });
+
+            var testEntity = CreateTestRecord(Entities.jmcg_testentity, new Dictionary<string, object>
+            {
+                { Fields.jmcg_testentity_.jmcg_boolean, true },
+            });
+
+            var fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 0);
+
+            testEntity.SetLookupField(Fields.jmcg_testentity_.jmcg_user, OtherAdmin);
+            testEntity = UpdateFieldsAndRetreive(testEntity, Fields.jmcg_testentity_.jmcg_user);
+
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 1);
+            Assert.IsNull(fieldChangeHistory.First().GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime));
+
+            testEntity.SetField(Fields.jmcg_testentity_.jmcg_user, null);
+            testEntity = UpdateFieldsAndRetreive(testEntity, Fields.jmcg_testentity_.jmcg_user);
+
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 1);
+            Assert.IsNotNull(fieldChangeHistory.First().GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime));
+
+            testEntity.SetLookupField(Fields.jmcg_testentity_.jmcg_user, OtherAdmin);
+            testEntity = UpdateFieldsAndRetreive(testEntity, Fields.jmcg_testentity_.jmcg_user);
+
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 2);
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) != null));
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) == null));
+        }
+
+        [TestMethod]
+        public void FieldChangeHistoryFilterTest()
+        {
+            DeleteAll(Entities.jmcg_fieldchangeconfiguration);
+            DeleteAll(Entities.jmcg_fieldchangehistory);
+            DeleteAll(Entities.jmcg_testentity);
+
+            var filterXml = "<filter type=\"and\"><condition attribute=\"statecode\" operator=\"eq\" value=\"0\" /><condition attribute=\"jmcg_boolean\" operator=\"eq\" value=\"1\" /></filter>";
+
+            var fieldChangeConfig = CreateTestRecord(Entities.jmcg_fieldchangeconfiguration, new Dictionary<string, object>
+                {
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_name, Fields.jmcg_testentity_.jmcg_user },
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_entitytype, Entities.jmcg_testentity },
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_field, Fields.jmcg_testentity_.jmcg_user },
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_lookupfieldfield, Fields.jmcg_testentity_.ownerid },
+                    { Fields.jmcg_fieldchangeconfiguration_.jmcg_historyfilter, filterXml },
+                });
+
+            var testEntity = CreateTestRecord(Entities.jmcg_testentity, new Dictionary<string, object>
+            {
+                { Fields.jmcg_testentity_.jmcg_boolean, true },
+                { Fields.jmcg_testentity_.jmcg_user, new EntityReference(Entities.systemuser, CurrentUserId) }
+            });
+            var fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 1);
+            Assert.AreEqual(CurrentUserId, fieldChangeHistory.First().GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid));
+            Assert.IsNull(fieldChangeHistory.First().GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime));
+
+            testEntity.SetLookupField(Fields.jmcg_testentity_.jmcg_user, OtherAdmin);
+            testEntity.SetField(Fields.jmcg_testentity_.jmcg_boolean, false);
+            testEntity = UpdateFieldsAndRetreive(testEntity, Fields.jmcg_testentity_.jmcg_user, Fields.jmcg_testentity_.jmcg_boolean);
+
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 1);
+            Assert.IsNotNull(fieldChangeHistory.First().GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime));
+
+            testEntity.SetField(Fields.jmcg_testentity_.jmcg_boolean, true);
+            testEntity = UpdateFieldsAndRetreive(testEntity, Fields.jmcg_testentity_.jmcg_boolean);
+
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 2);
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == CurrentUserId));
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == OtherAdmin.Id && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) == null));
+
+            XrmService.SetState(testEntity.LogicalName, testEntity.Id, OptionSets.TestEntity.Status.Inactive);
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 2);
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == CurrentUserId));
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == OtherAdmin.Id && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) != null));
+
+            XrmService.SetState(testEntity.LogicalName, testEntity.Id, OptionSets.TestEntity.Status.Active);
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 3);
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == CurrentUserId));
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == OtherAdmin.Id && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) == null));
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == OtherAdmin.Id && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) != null));
+
+
+            testEntity.SetLookupField(Fields.jmcg_testentity_.jmcg_user, CurrentUserId, Entities.systemuser);
+            testEntity = UpdateFieldsAndRetreive(testEntity, Fields.jmcg_testentity_.jmcg_user);
+
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 4);
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == CurrentUserId && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) == null));
+            Assert.AreEqual(1, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == CurrentUserId && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) != null));
+            Assert.AreEqual(2, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == OtherAdmin.Id && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) != null));
+
+            XrmService.Delete(testEntity);
+
+            fieldChangeHistory = XrmService.RetrieveAllAndConditions(Entities.jmcg_fieldchangehistory, new[]
+            {
+                new ConditionExpression(Fields.jmcg_fieldchangehistory_.jmcg_changedrecordid, ConditionOperator.Equal, testEntity.Id.ToString())
+            });
+            Assert.IsTrue(fieldChangeHistory.Count() == 4);
+            Assert.AreEqual(2, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == CurrentUserId && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) != null));
+            Assert.AreEqual(2, fieldChangeHistory.Count(h => h.GetLookupGuid(Fields.jmcg_fieldchangehistory_.ownerid) == OtherAdmin.Id && h.GetField(Fields.jmcg_fieldchangehistory_.jmcg_endtime) != null));
+        }
+
+        [TestMethod]
         public void FieldChangeHistoryRunPluginAsTest()
         {
             Assert.IsNotNull(TestTeam);

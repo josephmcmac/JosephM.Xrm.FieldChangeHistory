@@ -1,13 +1,9 @@
-﻿#region
-
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Schema;
-
-#endregion
 
 namespace JosephM.Xrm.FieldChangeHistory.Plugins.Xrm
 {
@@ -451,6 +447,30 @@ namespace JosephM.Xrm.FieldChangeHistory.Plugins.Xrm
                 }
             }
             return result;
+        }
+
+        public static bool MeetsFilter(Func<string, object> getFieldDelegate, FilterExpression filter)
+        {
+            if (filter == null)
+            {
+                return true;
+            }
+            var result = true;
+            if (filter.FilterOperator == LogicalOperator.Or)
+            {
+                result =
+                    (!filter.Conditions.Any() && !filter.Filters.Any())
+                    || filter.Conditions.Any(c => MeetsCondition(getFieldDelegate(c.AttributeName), c))
+                    || filter.Filters.Any(f => MeetsFilter(getFieldDelegate, f));
+            }
+            else
+            {
+                result = MeetsConditions(getFieldDelegate, filter.Conditions)
+                    && filter.Filters.All(f => MeetsFilter(getFieldDelegate, f));
+            }
+
+            return result;
+
         }
 
         /// <summary>

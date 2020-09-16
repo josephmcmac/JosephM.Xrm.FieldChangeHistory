@@ -3642,6 +3642,7 @@ namespace Schema
 			public const string jmcg_field = "jmcg_field";
 			public const string jmcg_fieldchangeconfigurationid = "jmcg_fieldchangeconfigurationid";
 			public const string jmcg_fieldselectionfield = "jmcg_fieldselectionfield";
+			public const string jmcg_historyfilter = "jmcg_historyfilter";
 			public const string jmcg_lookupfieldfield = "jmcg_lookupfieldfield";
 			public const string jmcg_lookupfieldfieldselectionfield = "jmcg_lookupfieldfieldselectionfield";
 			public const string jmcg_name = "jmcg_name";
@@ -3761,6 +3762,7 @@ namespace Schema
 			public const string jmcg_timetakenstartnotimezone = "jmcg_timetakenstartnotimezone";
 			public const string jmcg_timetakenstartutc = "jmcg_timetakenstartutc";
 			public const string jmcg_timetakenutc = "jmcg_timetakenutc";
+			public const string jmcg_user = "jmcg_user";
 			public const string modifiedby = "modifiedby";
 			public const string modifiedon = "modifiedon";
 			public const string modifiedonbehalfby = "modifiedonbehalfby";

@@ -84,7 +84,6 @@ namespace JosephM.Xrm.FieldChangeHistory.Plugins.Services
                         sdkMessage.SetLookupField(Fields.sdkmessageprocessingstep_.sdkmessageid, GetPluginMessage(message));
                         sdkMessage.SetField(Fields.sdkmessageprocessingstep_.rank, 1);
                         sdkMessage.SetField(Fields.sdkmessageprocessingstep_.name, $"Change History For {targetTypeForChange}.{targetFieldForChange} on {message}");
-                        sdkMessage.SetField(Fields.sdkmessageprocessingstep_.filteringattributes, targetFieldForChange);
                         if (runAs != null)
                         {
                             sdkMessage.SetField(Fields.sdkmessageprocessingstep_.impersonatinguserid, runAs);
@@ -230,6 +229,20 @@ namespace JosephM.Xrm.FieldChangeHistory.Plugins.Services
             config.MaxInternalValueLength = XrmService.GetMaxLength(Fields.jmcg_fieldchangehistory_.jmcg_internalvalue, Entities.jmcg_fieldchangehistory);
             config.MaxValueLength = XrmService.GetMaxLength(Fields.jmcg_fieldchangehistory_.jmcg_value, Entities.jmcg_fieldchangehistory);
             config.MaxHistoryNameLength = XrmService.GetMaxLength(Fields.jmcg_fieldchangehistory_.jmcg_name, Entities.jmcg_fieldchangehistory);
+
+            var filterXml = fieldChangeEntity.GetStringField(Fields.jmcg_fieldchangeconfiguration_.jmcg_historyfilter);
+            if (!string.IsNullOrWhiteSpace(filterXml))
+            {
+
+                var fetchXml = "<fetch distinct=\"true\" no-lock=\"false\" mapping=\"logical\"><entity name=\"" + type + "\">" + filterXml + "</entity></fetch>";
+                var response = (Microsoft.Crm.Sdk.Messages.FetchXmlToQueryExpressionResponse)XrmService.Execute(new Microsoft.Crm.Sdk.Messages.FetchXmlToQueryExpressionRequest
+                {
+                    FetchXml = fetchXml
+                });
+
+                config.FilterExpression = response.Query.Criteria;
+            }
+
             return config;
         }
 
