@@ -27,6 +27,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.0.0.0", "1.0.0.0", "{C3BC1A62-C720-44D8-BC37-39E2DA838D9D}"
 	ProjectSection(SolutionItems) = preProject
 		Releases\1.0.0.0\JosephMcGregorFieldChangeHistory_1_0_0_0.zip = Releases\1.0.0.0\JosephMcGregorFieldChangeHistory_1_0_0_0.zip
+		Releases\1.0.0.0\JosephMcGregorFieldChangeHistory_1_0_0_0_managed.zip = Releases\1.0.0.0\JosephMcGregorFieldChangeHistory_1_0_0_0_managed.zip
 	EndProjectSection
 EndProject
 Global
