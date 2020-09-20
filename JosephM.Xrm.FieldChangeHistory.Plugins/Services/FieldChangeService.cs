@@ -82,7 +82,7 @@ namespace JosephM.Xrm.FieldChangeHistory.Plugins.Services
                         sdkMessage.SetOptionSetField(Fields.sdkmessageprocessingstep_.stage, PluginStage.PostEvent);
                         sdkMessage.SetLookupField(Fields.sdkmessageprocessingstep_.sdkmessagefilterid, GetPluginFilter(targetTypeForChange, message));
                         sdkMessage.SetLookupField(Fields.sdkmessageprocessingstep_.sdkmessageid, GetPluginMessage(message));
-                        sdkMessage.SetField(Fields.sdkmessageprocessingstep_.rank, 1);
+                        sdkMessage.SetField(Fields.sdkmessageprocessingstep_.rank, 0);
                         sdkMessage.SetField(Fields.sdkmessageprocessingstep_.name, $"Change History For {targetTypeForChange}.{targetFieldForChange} on {message}");
                         if (runAs != null)
                         {
