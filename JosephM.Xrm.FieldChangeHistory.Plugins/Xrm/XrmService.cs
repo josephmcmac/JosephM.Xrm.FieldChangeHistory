@@ -1085,7 +1085,7 @@ namespace JosephM.Xrm.FieldChangeHistory.Plugins.Xrm
                 var type = er.LogicalName;
                 var id = er.Id;
                 var name = er.Name;
-                if (name == null && type != null)
+                if (type != null)
                 {
                     name = (string)LookupField(type, id, GetPrimaryField(type));
                 }

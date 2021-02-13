@@ -30,6 +30,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.0.0.0", "1.0.0.0", "{C3BC
 		Releases\1.0.0.0\JosephMcGregorFieldChangeHistory_1_0_0_0_managed.zip = Releases\1.0.0.0\JosephMcGregorFieldChangeHistory_1_0_0_0_managed.zip
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.0.0.1", "1.0.0.1", "{6AA35FDD-06B8-40FA-BCC2-D545BFE912F8}"
+	ProjectSection(SolutionItems) = preProject
+		Releases\1.0.0.1\JosephMcGregorFieldChangeHistory_1_0_0_1.zip = Releases\1.0.0.1\JosephMcGregorFieldChangeHistory_1_0_0_1.zip
+		Releases\1.0.0.1\JosephMcGregorFieldChangeHistory_1_0_0_1_managed.zip = Releases\1.0.0.1\JosephMcGregorFieldChangeHistory_1_0_0_1_managed.zip
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +64,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C3BC1A62-C720-44D8-BC37-39E2DA838D9D} = {A8BC4F19-813F-4906-9C04-5613466DE71B}
+		{6AA35FDD-06B8-40FA-BCC2-D545BFE912F8} = {A8BC4F19-813F-4906-9C04-5613466DE71B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2264DCDB-40FD-4EA0-A900-8B667D87DBB2}
